@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Card Scanner icon: rounded blue tile, white card, scan corner brackets -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="#0b5fff"/>
+  <!-- card -->
+  <rect x="156" y="106" width="200" height="300" rx="18" fill="#ffffff"/>
+  <rect x="180" y="150" width="152" height="24" rx="12" fill="#bcd0f7"/>
+  <rect x="180" y="190" width="104" height="24" rx="12" fill="#dfe7fa"/>
+  <circle cx="256" cy="300" r="44" fill="#0b5fff"/>
+  <path d="M256 278 L270 300 L256 322 L242 300 Z" fill="#ffffff"/>
+  <!-- scan corner brackets -->
+  <g stroke="#ffffff" stroke-width="26" fill="none" stroke-linecap="round">
+    <path d="M96 176 V116 Q96 96 116 96 H176"/>
+    <path d="M336 96 H396 Q416 96 416 116 V176"/>
+    <path d="M96 336 V396 Q96 416 116 416 H176"/>
+    <path d="M336 416 H396 Q416 416 416 396 V336"/>
+  </g>
+</svg>
