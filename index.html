@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Phone-first: no zoom-out, fits the screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b5fff">
+  <meta name="description" content="Card Scanner — photograph, catalog, value, and sell your collectible cards.">
+  <title>Card Scanner</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- App header -->
+  <header class="app-header">
+    <h1>Card Scanner</h1>
+    <button id="btn-add" class="btn btn-primary" type="button">+ Add card</button>
+  </header>
+
+  <!-- ============ COLLECTION VIEW ============ -->
+  <main id="view-list" class="view">
+    <!-- Totals bar -->
+    <section class="totals" aria-live="polite">
+      <div class="totals-item"><span class="totals-num" id="totals-count">0</span><span class="totals-label">items</span></div>
+      <div class="totals-item"><span class="totals-num" id="totals-value">$0</span><span class="totals-label">est. value</span></div>
+    </section>
+
+    <!-- Search / filter / sort controls -->
+    <section class="controls">
+      <input id="search" class="input" type="search" placeholder="Search title, brand, year…" aria-label="Search collection" autocomplete="off">
+      <div class="controls-row">
+        <select id="filter-category" class="input" aria-label="Filter by category">
+          <option value="">All categories</option>
+          <option>Baseball</option>
+          <option>Football</option>
+          <option>Basketball</option>
+          <option>Soccer</option>
+          <option>Hockey</option>
+          <option>TCG/Gaming</option>
+          <option>Other</option>
+        </select>
+        <select id="sort-by" class="input" aria-label="Sort collection">
+          <option value="newest">Newest first</option>
+          <option value="value">Value: high to low</option>
+          <option value="title">Title A–Z</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Friendly empty state (no seed data — collection starts empty) -->
+    <section id="empty-state" class="empty-state">
+      <div class="empty-icon" aria-hidden="true">🃏</div>
+      <h2>No cards yet</h2>
+      <p>Tap <strong>+ Add card</strong> to photograph your first card — front and back — and start your collection.</p>
+    </section>
+
+    <!-- Spreadsheet-style item list -->
+    <ul id="item-list" class="item-list"></ul>
+  </main>
+
+  <!-- ============ ADD / EDIT FORM VIEW ============ -->
+  <main id="view-form" class="view hidden">
+    <header class="view-subhead">
+      <button id="btn-form-back" class="btn btn-ghost" type="button">← Back</button>
+      <h2 id="form-title">Add card</h2>
+    </header>
+
+    <form id="item-form" novalidate>
+      <!-- Photos: front and back, camera-first on phones -->
+      <fieldset class="photo-fieldset">
+        <legend>Photos</legend>
+        <div class="photo-row">
+          <div class="photo-slot">
+            <img id="preview-front" class="photo-preview hidden" alt="Front photo preview">
+            <label class="btn btn-photo" for="photo-front">📷 Front photo</label>
+            <input id="photo-front" type="file" accept="image/*" capture="environment" class="visually-hidden">
+          </div>
+          <div class="photo-slot">
+            <img id="preview-back" class="photo-preview hidden" alt="Back photo preview">
+            <label class="btn btn-photo" for="photo-back">📷 Back photo</label>
+            <input id="photo-back" type="file" accept="image/*" capture="environment" class="visually-hidden">
+          </div>
+        </div>
+        <p class="hint">Tip: lay the card flat in good light for the clearest shot.</p>
+      </fieldset>
+
+      <label class="field">Title <span class="required">*</span>
+        <input id="f-title" class="input" type="text" required maxlength="120" placeholder="e.g. 1989 Topps Traded #41T Ken Griffey Jr.">
+      </label>
+
+      <label class="field">Category
+        <select id="f-category" class="input">
+          <option>Baseball</option>
+          <option>Football</option>
+          <option>Basketball</option>
+          <option>Soccer</option>
+          <option>Hockey</option>
+          <option>TCG/Gaming</option>
+          <option>Other</option>
+        </select>
+      </label>
+
+      <div class="field-row">
+        <label class="field">Year
+          <input id="f-year" class="input" type="text" inputmode="numeric" maxlength="4" placeholder="1989">
+        </label>
+        <label class="field">Card #
+          <input id="f-cardnum" class="input" type="text" maxlength="20" placeholder="#41T">
+        </label>
+      </div>
+
+      <label class="field">Brand / Set
+        <input id="f-brand" class="input" type="text" maxlength="80" placeholder="Topps Traded">
+      </label>
+
+      <div class="field-row">
+        <label class="field">Condition
+          <select id="f-condition" class="input">
+            <option>Mint</option>
+            <option selected>Near Mint</option>
+            <option>Excellent</option>
+            <option>Very Good</option>
+            <option>Good</option>
+            <option>Fair</option>
+            <option>Poor</option>
+          </select>
+        </label>
+        <label class="field">Grade <span class="optional">(optional)</span>
+          <input id="f-grade" class="input" type="text" maxlength="20" placeholder="PSA 9">
+        </label>
+      </div>
+
+      <label class="field">Estimated value ($)
+        <input id="f-value" class="input" type="number" inputmode="decimal" min="0" step="0.01" placeholder="25.00">
+      </label>
+
+      <label class="field">Notes
+        <textarea id="f-notes" class="input" rows="3" maxlength="500" placeholder="Centering, corners, anything buyers should know…"></textarea>
+      </label>
+
+      <button id="btn-save" class="btn btn-primary btn-block" type="submit">Save card</button>
+      <p id="form-error" class="form-error hidden" role="alert">Please give the card a title.</p>
+    </form>
+  </main>
+
+  <!-- ============ ITEM DETAIL VIEW ============ -->
+  <main id="view-detail" class="view hidden">
+    <header class="view-subhead">
+      <button id="btn-detail-back" class="btn btn-ghost" type="button">← Back</button>
+      <h2>Card details</h2>
+    </header>
+    <article id="detail-body"></article>
+  </main>
+
+  <!-- ============ SELL-AS-LOT PANEL (bottom sheet) ============ -->
+  <section id="lot-panel" class="lot-panel hidden" aria-live="polite">
+    <div class="lot-summary">
+      <strong><span id="lot-count">0</span> selected</strong>
+      <span>combined est. value: <strong id="lot-value">$0</strong></span>
+    </div>
+    <div class="lot-fields">
+      <input id="lot-title" class="input" type="text" maxlength="120" placeholder="Lot title (e.g. Vintage baseball lot)">
+      <input id="lot-price" class="input" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Asking price $">
+    </div>
+    <div class="lot-actions">
+      <button id="btn-lot-share" class="btn btn-secondary" type="button">Share lot</button>
+      <button id="btn-lot-copy" class="btn btn-secondary" type="button">Copy lot listing</button>
+      <button id="btn-lot-ebay" class="btn btn-ebay" type="button">List lot on eBay</button>
+      <button id="btn-lot-clear" class="btn btn-ghost" type="button">Clear</button>
+    </div>
+  </section>
+
+  <!-- Toast for friendly messages (e.g. storage full, copied) -->
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // Register the service worker so the app works offline once installed.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function () { /* offline not available */ });
+      });
+    }
+  </script>
+</body>
+</html>
