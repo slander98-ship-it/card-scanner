@@ -3,7 +3,7 @@
  * so the app opens offline after the first visit.
  */
 
-var CACHE_NAME = 'card-scanner-v2';
+var CACHE_NAME = 'card-scanner-v3';
 
 // Everything the app needs to run: no network requests at runtime otherwise.
 var APP_SHELL = [
