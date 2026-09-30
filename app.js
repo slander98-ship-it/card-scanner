@@ -437,6 +437,14 @@ function lotListingText() {
 /* ---------------- Wiring ---------------- */
 
 document.addEventListener('DOMContentLoaded', function () {
+  // iPhone users hit an Apple bug where the in-app camera can open black;
+  // show them the Camera-app + Photo Library workaround hint.
+  if (/iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+    var iosHint = $('ios-camera-hint');
+    if (iosHint) iosHint.hidden = false;
+  }
+
   $('btn-add').addEventListener('click', function () { openForm(null); });
   $('btn-form-back').addEventListener('click', function () { showView('list'); renderList(); });
   $('btn-detail-back').addEventListener('click', function () { showView('list'); renderList(); });
