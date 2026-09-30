@@ -471,4 +471,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
   renderList();
   showView('list');
+
+  // Magic-link pre-fill: a link like
+  //   ?new=1&title=...&category=Baseball&year=...&brand=...&cardNumber=...&condition=...&grade=...&value=...&notes=...
+  // opens the add form with every field already filled in. The assistant sends
+  // these links after identifying a card from photos, so nothing is typed by hand.
+  (function () {
+    var q = new URLSearchParams(window.location.search);
+    if (q.get('new') !== '1') return;
+    openForm(null);
+    function setText(id, val) { if (val !== null && val !== '') $(id).value = val; }
+    function setSelect(id, val) {
+      if (!val) return;
+      var sel = $(id);
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === val || sel.options[i].text === val) {
+          sel.value = sel.options[i].value;
+          return;
+        }
+      }
+    }
+    setText('f-title', q.get('title'));
+    setSelect('f-category', q.get('category'));
+    setText('f-year', q.get('year'));
+    setText('f-cardnum', q.get('cardNumber'));
+    setText('f-brand', q.get('brand'));
+    setSelect('f-condition', q.get('condition'));
+    setText('f-grade', q.get('grade'));
+    setText('f-value', q.get('value'));
+    setText('f-notes', q.get('notes'));
+    toast('Details filled in — add your photos and tap Save.');
+    // Clean the URL so a refresh doesn't reopen the form.
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  })();
 });
